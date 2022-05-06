@@ -369,7 +369,7 @@ export default function EditCanadaCustomsInvoice({ canadaCustomsInvoice }) {
         <h1>Edit Canada Customs Invoice</h1>
         <Form onSubmit={handleSubmit(onSubmit)} className="fillupForm">
           {fieldGroups[step]}
-          {/* <Buttons /> */}
+          <Buttons />
           {/* <Reference/> */}
         </Form>
       </main>

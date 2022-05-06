@@ -8,8 +8,8 @@ import { useRouter } from "next/router";
 
 import styles from "../uscustomsinvoice.module.css";
 
-// import { dbConnect } from '../../../../utils/dbConnect'
-// import USCustomsInvoice from '../../../../models/USCustomsInvoice'
+import { dbConnect } from '../../../../utils/dbConnect'
+import USCustomsInvoice from '../../../../models/USCustomsInvoice'
 
 import { apiAddress } from "../../../../utils/apiAddress";
 
@@ -18,12 +18,12 @@ export default function ({ usCustomsInvoice }) {
   const router = useRouter();
 
   const handleClick = async () => {
-    const id = usCustomsInvoice._id;
-    console.log("id: ", id);
+    const invoice = usCustomsInvoice._id;
+    console.log("invoice: ", invoice);
 
     try {
       const deleted = await fetch(
-      `${apiAddress}/api/forms/USCustomsInvoice/${USCustomsInvoice._id}`,
+      `${apiAddress}/api/forms/USCustomsInvoice/${invoice}`,
         {
           method: "DELETE",
         }
@@ -70,7 +70,7 @@ export default function ({ usCustomsInvoice }) {
         <div className={styles.createNewBox}>
           <h1 className={styles.title}>{formType}</h1>
           <div>
-            <Link href={`/forms/uscustomsinvoice/${usCustomsInvoice._id}/edit`}>
+            <Link href={`/forms/uscustomsinvoice/${_id}/edit`}>
               <Button className={styles.button}>Edit</Button>
             </Link>
             <Button className={styles.button2} onClick={handleClick}>
@@ -154,50 +154,50 @@ export default function ({ usCustomsInvoice }) {
   );
 }
 
-export async function getStaticPaths() {
-  const res = await fetch(`http://localhost:3000/api/forms/USCustomsInvoice`);
-  const data = await res.json();
+// export async function getStaticPaths() {
+//   const res = await fetch(`${apiAddress}/api/forms/USCustomsInvoice`);
+//   const data = await res.json();
 
-  console.log("data: ", data);
+//   console.log("data: ", data);
 
-  const paths = data.data.map((invoice) => {
-    return {
-      params: { id: invoice._id.toString() },
-    };
-  });
+//   const paths = data.data.map((invoice) => {
+//     return {
+//       params: { id: invoice._id.toString() },
+//     };
+//   });
 
-  console.log("paths: ", paths);
-  return {
-    paths,
-    fallback: false,
-  };
-}
-
-export async function getStaticProps(context) {
-  await dbConnect();
-
-  const result = await USCustomsInvoice.findById({ _id: id });
-  const invoice = result.toObject();
-  invoice._id = result._id.toString();
-
-  console.log("usCustomsInvoice: ", usCustomsInvoice);
-  return {
-    props: { usCustomsInvoice: usCustomsInvoice.data },
-  };
-}
-
-// export async function getServerSideProps({ params: { id } }) {
-//     console.log("req: ", id)
-//     await dbConnect()
-
-//     const result = await USCustomsInvoice.findById({_id: id})
-//     const invoice = result.toObject()
-//     invoice._id = result._id.toString()
-
-//     return { props: { usCustomsInvoice: invoice } }
+//   console.log("paths: ", paths);
+//   return {
+//     paths,
+//     fallback: false,
+//   };
 // }
 
-// export async function getServerSideProps({ params: { id } }) {
+// export async function getStaticProps(context) {
+//   await dbConnect();
+
+//   const result = await USCustomsInvoice.findById({ _id: id });
+//   const invoice = result.toObject();
+//   invoice._id = result._id.toString();
+
+//   console.log("usCustomsInvoice: ", usCustomsInvoice);
+//   return {
+//     props: { usCustomsInvoice: usCustomsInvoice.data },
+//   };
+// }
+
+export async function getServerSideProps({ query: { id } }) {
+    console.log("req: ", id)
+    await dbConnect()
+
+    const result = await USCustomsInvoice.findById({_id: id})
+    const invoice = result.toObject()
+    invoice._id = result._id.toString()
+
+    return { props: { usCustomsInvoice: invoice } }
+}
+
+// export async function getServerSideProps({ query: { id } }) {
 //   const res = await fetch(
 //     `http://localhost:3000/api/forms/USCustomsInvoice/${id}`
 //   );
