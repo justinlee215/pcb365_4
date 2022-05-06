@@ -7,13 +7,13 @@ import { Button, Alert } from "react-bootstrap";
 
 import styles from "./canadacustomsinvoice.module.css";
 
-// import { dbConnect } from "../../../utils/dbConnect";
-// import CanadaCustomsInvoice from "../../../models/CanadaCustomsInvoice";
+import { dbConnect } from "../../../utils/dbConnect";
+import CanadaCustomsInvoice from "../../../models/CanadaCustomsInvoice";
 
 import { apiAddress } from "../../../utils/apiAddress";
 
 export default function canadaCustomsInvoice({ canadaCustomsInvoices }) {
-  console.log("canada: ", canadaCustomsInvoices);
+  console.log("canada: ", typeof canadaCustomsInvoices);
   return (
     <Layout>
       <Head>
@@ -70,19 +70,17 @@ export default function canadaCustomsInvoice({ canadaCustomsInvoices }) {
 }
 
 export async function getStaticProps() {
-  // const canadaCustomsInvoices = await CanadaCustomsInvoice.find({})
+  await dbConnect();
 
-  const res = await fetch(
-    `${apiAddress}/api/forms/CanadaCustomsInvoice`
-  );
-  
-  const canadaCustomsInvoices = await res.json();
+  const result = await CanadaCustomsInvoice.find({});
 
-  console.log("canadaCustomsInvoices: ", canadaCustomsInvoices);
+  const canadaCustomsInvoices = result.reverse().map((doc) => {
+    const invoice = doc.toObject();
+    invoice._id = doc._id.toString();
+    return invoice;
+  });
 
-  return {
-    props: { canadaCustomsInvoices: canadaCustomsInvoices.data.reverse() },
-  };
+  return { props: { canadaCustomsInvoices: canadaCustomsInvoices } };
 }
 
 // export async function getServerSideProps() {

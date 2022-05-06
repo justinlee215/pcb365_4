@@ -7,8 +7,8 @@ import { Button, Alert } from "react-bootstrap";
 
 import styles from "./uscustomsinvoice.module.css";
 
-// import { dbConnect } from "../../../utils/dbConnect";
-// import USCustomsInvoice from "../../../models/USCustomsInvoice";
+import { dbConnect } from "../../../utils/dbConnect";
+import USCustomsInvoice from "../../../models/USCustomsInvoice";
 
 import { apiAddress } from "../../../utils/apiAddress";
 
@@ -66,13 +66,18 @@ export default function ({ usCustomsInvoices }) {
 }
 
 export async function getStaticProps() {
-  const res = await fetch(`${apiAddress}/api/forms/USCustomsInvoice`);
-  const usCustomsInvoices = await res.json();
+  await dbConnect();
 
-  console.log("data fetched: ", usCustomsInvoices);
+  const result = await USCustomsInvoice.find({});
+
+  const usCustomsInvoices = result.reverse().map((doc) => {
+    const invoice = doc.toObject();
+    invoice._id = doc._id.toString();
+    return invoice;
+  });
 
   return {
-    props: { usCustomsInvoices: usCustomsInvoices.data.reverse() },
+    props: { usCustomsInvoices: usCustomsInvoices },
   };
 }
 

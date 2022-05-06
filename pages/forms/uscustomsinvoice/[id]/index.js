@@ -174,14 +174,11 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(context) {
-  const id = context.params.id;
+  await dbConnect();
 
-  console.log("id: ", id);
-
-  const res = await fetch(
-    `http://localhost:3000/api/forms/USCustomsInvoice/${id}`
-  );
-  const usCustomsInvoice = await res.json();
+  const result = await USCustomsInvoice.findById({ _id: id });
+  const invoice = result.toObject();
+  invoice._id = result._id.toString();
 
   console.log("usCustomsInvoice: ", usCustomsInvoice);
   return {

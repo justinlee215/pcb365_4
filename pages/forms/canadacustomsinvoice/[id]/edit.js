@@ -379,7 +379,6 @@ export default function EditCanadaCustomsInvoice({ canadaCustomsInvoice }) {
 }
 
 export async function getServerSideProps({ query: { id } }) {
-  console.log("req: ", id);
   await dbConnect();
 
   const result = await CanadaCustomsInvoice.findById({ _id: id });
